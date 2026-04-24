@@ -8,7 +8,7 @@ This repository includes both polished projects and early learning exercises. Th
 
 | Project | Description | Status |
 |---|---|---|
-| Capital Budgeting Investment Analysis | Python-based Investment Analysis tool for calculating NPV, IRR, ROI, and project-level finance metrics. | Rebuild Planned |
+| Capital Budgeting Investment Analysis | Python-based Investment Analysis tool for calculating NPV, IRR, ROI, Payback Period, Profitability Index, and project-level finance metrics. | Initial Rebuild Complete |
 | Restaurant POS Sales Reporting | Small point-of-sale (POS) and Sales Reporting application inspired by an early Python project. | Rebuild Planned |
 | File & Data Utilities | Practical scripts for cleaning, organizing, and automating repetitive data workflows. | Planned |
 
