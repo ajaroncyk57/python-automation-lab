@@ -1,141 +1,263 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Sep 27 10:59:31 2019
+Restaurant POS Sales Reporting
+
+A Command-Line Python Point-of-Sale (POS) & Sales Reporting Tool for capturing Customer Orders, calculating Order Totals, and producing an End-of-Day Sales Report
 
 Author: Andrew Jaroncyk
-Title: Benny's Burgers
-Purpose: A Point of Sale (POS) program that automatically calculates total
-value of each individual customer order given options to add to a burger that 
-also generates an End of Day Report
+Created: 2019-09-27
+Rebuilt: 2026-04-24
 """
 
-# Initialize Price
-price = 0.00 
+from dataclasses import dataclass
+from typing import Dict, List, Optional
 
-# Initialize Menu Counters
-BEEF_COUNT = 0
-BEYOND_BEEF_COUNT = 0
-DOUBLE_COUNT = 0
-TRIPLE_COUNT = 0
-CHEESE_COUNT = 0
-BACON_COUNT = 0
-AVOCADO_COUNT = 0
-CHILI_COUNT = 0
-FRIES_COUNT = 0
-RINGS_COUNT = 0
+@dataclass
+class MenuItem: 
+    """Represents Menu Item available for purchase"""
 
-# Commence Calculations
-while True:
-    beef_choice = input("Please choose beef(B) or beyond beef(y): ")
-    if beef_choice == "B" or beef_choice == "b":
-        price += 5.75
-        BEEF_COUNT += 1 
-    elif beef_choice == "Y" or beef_choice == "y":
-        price += 6.25
-        BEYOND_BEEF_COUNT += 1
-    else:
-        beef_choice
+    code: str
+    name: str
+    category: str
+    price: float
+    
+
+@dataclass
+class OrderLine:
+    """Represents one (1) selected Item within Order"""
+    
+    item: MenuItem
+    quantity: int = 1
+    
+    @property
+    def line_total(self) -> float:
+        """Calculates total value of Order Line"""
+        return self.item.price * self.quantity
+    
+    
+@dataclass
+class Order:
+    """Represents Customer Order"""
+    
+    order_id: int
+    order_lines: List[OrderLine]
+    
+    @property
+    def order_total(self) -> float:
+        """Calculates total value of Order"""
+        return sum(line.line_total for line in self.order_lines)
+    
+
+MENU: Dict[str, MenuItem] ={
+    "B": MenuItem("B", "Beef Burger", "Burger", 5.75),
+    "Y": MenuItem("Y", "Beyond Beef Burger", "Burger", 6.25),
+    "D": MenuItem("D", "Double Patty Upgrade", "Upgrade", 2.00),
+    "T": MenuItem("T", "Triple Patty Upgrade", "Upgrade", 3.50),
+    "C": MenuItem("C", "Cheese", "Topping", 0.50),
+    "BA": MenuItem("BA", "Bacon", "Topping", 1.25),
+    "A": MenuItem("A", "Avocado", "Topping", 0.75),
+    "CH": MenuItem("CH", "Chili", "Topping", 2.50),
+    "F": MenuItem("F", "Fries", "Side", 2.00),
+    "R": MenuItem("R", "Onion Rings", "Side", 2.25),
+}
+
+
+def format_currency(value: float) -> str:
+    """"Formats numeric value as Currency"""
+    return f"${value:,.2f}"
+
+def get_choice(prompt: str, valid_choices: List[str]) -> str:
+    """Safely collects valid Menu Choice from User"""
+    
+    normalized_choices = [choice.upper() for choice in valid_choices]
+    
+    while True: 
+        choice = input(prompt).strip().upper()
         
-    extra_patty = input("Would you like to make it a double(D) or a triple(T)? or N: ")
-    if extra_patty == "D" or extra_patty == "d":
-        price += 2.00
-        DOUBLE_COUNT += 1
-    elif extra_patty == "T" or extra_patty == "t":
-        price += 3.50
-        TRIPLE_COUNT += 1
-    elif extra_patty == "N" or extra_patty == "n":
-        price = price
+        if choice in normalized_choices:
+            return choice
         
-    toppings = input("Would you like to add toppings? Y or N: ")
-    if toppings == "Y" or toppings == "y":
-        cheese = input("Would you like cheese? (Y or N) ")
-        if cheese == "Y" or cheese == "y":
-            price += 0.50
-            CHEESE_COUNT += 1
-        elif cheese == "N" or cheese == "n":
-            price = price
-        bacon = input("Would you like bacon? (Y or N) ")
-        if bacon == "Y" or bacon == "y":
-            price += 1.25
-            BACON_COUNT += 1
-        elif bacon == "N" or bacon == "n":
-            price = price
-        avocado = input("Would you lke avocado? (Y or N) " )
-        if avocado == "Y" or avocado == "y":
-            price += 0.75
-            AVOCADO_COUNT += 1
-        elif avocado == "N" or avocado == "N":
-            price = price
-        chili = input("Would you like chili? (Y or N) ")
-        if chili == "Y" or chili == "y":
-            price += 2.50
-            CHILI_COUNT += 1
-        elif chili == "N" or chili == "n":
-            price = price
-    side_order= input("Would you like Fries(F) or Rings(R)? or N ")
-    if side_order == "F" or side_order == "f":
-        price += 2.00
-        FRIES_COUNT += 1
-    elif side_order == "R" or side_order == "r":
-        price += 2.25
-        RINGS_COUNT += 1
-    elif side_order == "N" or side_order == "n":
-        price = price
-    
-    print("Order Summary")
-    print("--------------")
-    if BEEF_COUNT > 0:
-        print(BEEF_COUNT, "Beef")
+        print(f"Please enter one of the following: {','.join(normalized_choices)}")
         
-    if BEYOND_BEEF_COUNT > 0:
-        print(BEYOND_BEEF_COUNT, "Beyond Beef")
+def get_yes_no(prompt: str) -> bool:
+    """Collects YES/NO Response from User"""
     
-    if DOUBLE_COUNT > 0:
-        print(DOUBLE_COUNT, "Double")
-    
-    if TRIPLE_COUNT > 0:
-        print(TRIPLE_COUNT, "Triple")
-    
-    if CHEESE_COUNT > 0:
-        print(CHEESE_COUNT, "Cheese")
-    
-    if BACON_COUNT > 0:
-        print(BACON_COUNT, "Bacon")
-    
-    if AVOCADO_COUNT > 0:
-        print(AVOCADO_COUNT, "Avocado")
-    
-    if CHILI_COUNT > 0:
-        print(CHILI_COUNT, "Chili")
-    
-    if FRIES_COUNT > 0:
-        print(FRIES_COUNT, "Fries")
-    
-    if RINGS_COUNT > 0:
-        print(RINGS_COUNT, "Onion Rings")
+    choice = get_choice(prompt, ["Y", "N"])
+    return choice == "Y"
 
-    print("Order Total: ${:.2f}".format(price)) 
+def add_item(order_lines: List[OrderLine], item_code: str) -> None:
+    """Adds Menu Item to Current Order"""
+    
+    order_lines.append(OrderLine(item=MENU[item_code]))
+    
+def capture_order(order_id: int) -> Order:
+    """Captures Customer Order through Command Line"""
+    
+    order_lines: List[OrderLine] = []
+    
+    print("\nNew Customer Order")
+    print("-" * 50)
+    
+    burger_choice = get_choice(
+        "Choose Burger: Beef (B) or Beyond Beef (Y): ",
+        ["B", "Y"],
+    )
+    add_item(order_lines, burger_choice)
+    
+    
+    patty_choice = get_choice(
+        "Upgrade Patty? Double (D), Triple (T), or None (N): ",
+        ["D", "T", "N"],
+    )
+    if patty_choice !="N":
+        add_item(order_lines, patty_choice)
+        
+    if get_yes_no("Add Toppings? Y/N: "):
+        if get_yes_no("Add Cheese? Y/N: "):
+            add_item(order_lines, "C")
+            
+        if get_yes_no("Add Bacon? Y/N: "):
+            add_item(order_lines, "BA")
+            
+        if get_yes_no("Add Avocado? Y/N: "):
+            add_item(order_lines, "A")
 
-    quit_statement = input("Press enter to continue, Q to quit ")
-    if quit_statement == "":
-        pass
-    elif quit_statement == "Q" or quit_statement == "q":
-        break
+        if get_yes_no("Add Chili? Y/N: "):
+            add_item(order_lines, "CH")
+            
+            
+    side_choice = get_choice(
+        "Add a Side? Fries (F), Onion Rings (R), or None (N): ",
+        ["F", "R", "N"],
+    )
+    
+    if side_choice != "N":
+        add_item(order_lines, side_choice)
+        
+    return Order(order_id = order_id, order_lines = order_lines)
 
-# Produce Sales Report
-if quit_statement == "Q" or quit_statement == "q":
-    for i in range (0, 1):
-        print(2 * " " + "*" + 46 * " " + "*")
-        print(1 * " " + "**" + 46 * " " + "**")
-        print("***" + 46 * " " + "***")
-        print(20 * "=" + "Sales Report" + 20 * "=")
-        print("***" + 46 * " " + "***")
-        print(1 * " " + "**" + 46 * " " + "**")
-        print(2 * " " + "*" + 46 * " " + "*")
+def print_receipt(order: Order) -> None:
+    """Prints Receipt for Customer Order"""
+    print("\nOrder Receipt")
+    print("=" * 50)
+    print(f"Order ID: {order.order_id}")
+    print("-" * 50)
+    
+    for line in order.order_lines:
+        print(
+            f"{l
+            ine.item.name:<30} "
+            f"x{line.quantity:<3} "
+            f"{format_currency(line.line_total):>10}"
+        )
+
+    print("-" * 50)
+    print(f"{'Order Total: ':<35}{format_currency(order.order_total):>10}")
+    print("-" * 50)
+    
+def summarize_item_sales(orders: List[Order]) -> Dict[str, Dict[str, float]]:
+    """Summarizes Quantity & Revenue by Menu Item"""
+    
+    sales_summary: Dict[str, Dict[str, float]] = {}
+    
+    for order in orders:
+        for line in order.order_lines:
+            item_name = line.item.name
+            
+            if item_name not in sales_summary:
+                sales_sumamry[item_name] = {
+                    "Quantity": 0,
+                    "Revenue": 0.00,
+                }
+            
+            sales_summary[item_name]["quantity"] += line.quantity
+            sales_summary[item_name]["revenue"] += line.line_total
+            
+    return sales_summary
+
+def summarize_category_sales(orders: List[Order]) -> Dict[str, float]:
+    """Summarizes Revenue by Menu Category"""
+    
+    category_summary: Dict[str, float] = {}
+    
+    for order in orders:
+        for line in order.order_lines:
+            category = line.item.category
+            
+            if category not in category_summary:
+                category_summary[category] = 0.00
+                
+            category_summary[category] += line.line_total
+            
+    return category_summary
+
+def print_end_of_day_report(orders: List[Order]) -> None:
+    """Prints End-of-Day (EOD) Sales Report"""
     print("\n")
+    print("=" * 70)
+    print("EOD Sales Report")
+    print("=" * 70)
+    
+    if not orders:
+        print("No Orders were captured")
+        print("=" * 70)
+        return
+    
+    total_orders = len(orders)
+    total_revenue = sum(order.order_total for order in orders)
+    average_order_value = total_revenue / total_orders
+    
+    
+    print(f"Total Orders: {total_orders}")
+    print(f"Total Revenue: {format_currency(total_revenue)}")
+    print(f"Average Order Value (AOV): {format_currency(average_order_value)}")
 
-print("Type" + 29 * " " + "Count" + 9 * " " + "Total")
-print("Beef" + 32 * " ", BEEF_COUNT, 8 * " " + "{:.2f}".format(BEEF_COUNT * 5.75))
-print("Beyond Beef" + 25 * " ", BEYOND_BEEF_COUNT, 8 * " " + "{:.2f}".format(BEYOND_BEEF_COUNT * 6.50))
-print("-" * 52)
-print("Grand Total: " + 23 * " ", BEEF_COUNT + BEYOND_BEEF_COUNT, 8 * " " + "{:.2f}".format(((BEEF_COUNT * 5.75) + (BEYOND_BEEF_COUNT * 6.50))))
+    print("\nItem Sales")
+    print("-" * 70)
+    print(f"{'Item': < 30}{'Quantity': > 10}{'Revenue':>15}")
+    
+    item_sales = summarize_item_sales(orders)
+    for item_name, metrics in sorted(item_sales.items()):
+        print(
+            f"{item_name: < 30}"
+            f"{int(metrics['quantity']): > 10}"
+            f"{format_currency(metrics['revenue']):>15}"
+        )
+     
+        
+    print("\nCategory Revenue")
+    print("-" * 70)
+    print(f"{'Category': < 30}{'Revenue':>15}")
+    
+    category_sales = summarize_category_sales(orders)
+    for category, revenue in sorted(category_sales.items()):
+        print(f"{category: < 30}{format_currency(revenue): > 15}")
+    
+    
+    print("=" * 70)
+    
+def main() -> None:
+    """Runs the Restaurant POS Sales Reporting Workflow"""
+    
+    orders: List[Order] = []
+    next_order_id = 1
+    
+    print("Restaurant POS Sales Reporting")
+    print("=" * 50)
+    
+    while True:
+        order = capture_order(next_order_id)
+        orders.append(order)
+        print_receipt(order)
+        
+        next_order_id += 1
+        
+        continue_orders = get_yes_no("\nStart another Order? Y/N: ")
+        
+        if not continue_orders:
+            break
+        
+        print_end_of_day_report(orders)
+        
+if __name__ == "__main__":
+    main()
