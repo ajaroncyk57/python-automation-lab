@@ -10,6 +10,7 @@ This repository includes both polished projects and early learning exercises. Th
 |---|---|---|
 | Capital Budgeting Investment Analysis | Python-based Investment Analysis tool for calculating NPV, IRR, ROI, Payback Period, Profitability Index, and project-level finance metrics. | Initial Rebuild Complete |
 | Restaurant POS Sales Reporting | Command-line point-of-sale (POS) and sales reporting tool for capturing orders, generating receipts, and summarizing item/category sales performance. | Initial Rebuild Complete |
+| Compound Interest Scenario Simulator | Investment growth simulator with deterministic projections, inflation-adjusted balances, Monte Carlo simulation, target-balance probability estimates, and CSV export. | Initial Build Complete |
 | File & Data Utilities | Practical scripts for cleaning, organizing, and automating repetitive data workflows. | Planned |
 
 ## Archive
