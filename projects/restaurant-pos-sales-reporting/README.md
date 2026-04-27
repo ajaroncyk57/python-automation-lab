@@ -43,3 +43,6 @@ restaurant-pos-sales-reporting/
 ├── RestaurantPOSSalesReporting.py
 └── README.md
 ```
+
+## Notes
+This project is part of my Python Automation Lab and represents a refactored version of an early Python point-of-sale exercise.
